@@ -10,49 +10,24 @@ import (
 )
 
 func main() {
-
-
-
     http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
     })
-
     http.HandleFunc("/api/json", jsonHandler)
     http.HandleFunc("/api/json2", json2Handler)
 
+    http.HandleFunc("/api/getWithParams", getWithParamsHandler)
 
-
-    // Server that serves files from dir /www
-    // http.FileServer returns a http.Handler that responds to HTTP requests
-    // It serves files from spec. filesystem / dir
-
-    // fs is a variable that holds the handler object.
-    // http.FileServer is a func prov. by net/http package.
-    // It creates HTTP handler and returns it.
-    // the handler returns any file on a given path / maps route to the folder and file
-    // it reads from the disk
-    // it sends the content back to the browser with correct Content-Type
     fs := http.FileServer(http.Dir("./www"))
 
-
-    // reg the file server as the handler for path starting with "/"
-    // a simple static file web server
     http.Handle("/", fs)
 
-    // Start an HTTP server, listening to a given port;
-    // nil = "use the default ServeMux" - but what does it mean?
-    // It supposed to be what we have configured with http.Handle
-
-    // log.Fatal:
-    // 1) prints the error to stderr.
-    // 2) exits the program with status code 1
     const PORT = "8080"
     fmt.Printf("Listening on a port %s.", PORT)
     log.Fatal(http.ListenAndServe(":"+PORT, nil))
 }
 
-
-// handler returning JSON with NewEncoder
+// NewEncoder
 func jsonHandler(w http.ResponseWriter, r *http.Request) {
 	// Always set this header first
 	w.Header().Set("Content-Type", "application/json")
@@ -67,8 +42,7 @@ func jsonHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// handler returning JSON
-// Option B: using json.Marshal (sometimes useful when you want to log/pretty-print)
+// Marshal
 func json2Handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -96,4 +70,26 @@ func json2Handler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonBytes)
+}
+
+func getWithParamsHandler(w http.ResponseWriter, r *http.Request) {
+    // Optional: only allow GET
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+    authorization := r.Header.Get("Authorization")
+
+    fmt.Println(authorization);
+
+    w.WriteHeader(http.StatusOK) // 200 (optional - default is 200)
+    // Or just return some interesting ones as JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]any{
+		"authorization": authorization, // be careful logging/sending this!
+	})
+
+
+
 }
