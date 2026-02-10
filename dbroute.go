@@ -59,3 +59,17 @@ func SqliteHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK) 
 	json.NewEncoder(w).Encode(response)
 }
+
+func init() {
+  // prints automatically
+  fmt.Println("This is INIT")
+  
+}
+
+// todo: add struct; db data type
+// todo: research func init()
+/* 
+func init() in Go is a special function that the runtime calls automatically — you never call it yourself.
+init() runs during package initialization, which happens before main() starts executing (in programs that have a main function).
+
+*/
