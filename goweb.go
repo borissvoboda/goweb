@@ -16,6 +16,10 @@ func main() {
 
     http.HandleFunc("/api/getWithParams", GetWithParamsHandler)
 
+    http.HandleFunc("/api/sql", SqliteHandler)
+  fmt.Println("aaaa")
+
+
     fs := http.FileServer(http.Dir("./www"))
 
     http.Handle("/", fs)

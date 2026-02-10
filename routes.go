@@ -69,6 +69,5 @@ func GetWithParamsHandler(w http.ResponseWriter, r *http.Request) {
 		"authorization": authorization, // be careful logging/sending this!
 	})
 
-
-
 }
+
