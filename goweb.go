@@ -8,24 +8,20 @@ import (
 )
 
 func main() {
-    http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
-    })
-    http.HandleFunc("/api/json", JsonHandler)
-    http.HandleFunc("/api/json2", Json2Handler)
+	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+	})
+	http.HandleFunc("/api/json", JsonHandler)
+	http.HandleFunc("/api/getWithParams", GetWithParamsHandler)
 
-    http.HandleFunc("/api/getWithParams", GetWithParamsHandler)
+	http.HandleFunc("/api/sql", SqliteHandler)
+	fmt.Println("aaaa")
 
-    http.HandleFunc("/api/sql", SqliteHandler)
-  fmt.Println("aaaa")
+	fs := http.FileServer(http.Dir("./www"))
 
+	http.Handle("/", fs)
 
-    fs := http.FileServer(http.Dir("./www"))
-
-    http.Handle("/", fs)
-
-    const PORT = "8080"
-    fmt.Printf("AAA Listening on a port %s.", PORT)
-    log.Fatal(http.ListenAndServe(":"+PORT, nil))
+	const PORT = "8080"
+	fmt.Printf("AAA Listening on a port %s.", PORT)
+	log.Fatal(http.ListenAndServe(":"+PORT, nil))
 }
-
